@@ -1,0 +1,9 @@
+digraph G { rankdir=LR; fontname="Helvetica"; node [fontname="Helvetica", fontsize=10]; 
+ Student [shape=box, style=filled, fillcolor="#dbeafe", label="Student\n(actor)"]; Warden [shape=box, style=filled, fillcolor="#dbeafe", label="Warden\n(actor)"]; Guard [shape=box, style=filled, fillcolor="#dbeafe", label="Gate Security\n(actor)"];
+ subgraph cluster_sys { label="Smart Hostel Outpass System"; style=rounded; node [shape=ellipse, style=filled, fillcolor="#f8fafc"];
+  u1 [label="Register"]; u2 [label="Login"]; u3 [label="Submit request\nin natural language"]; u4 [label="View NLP analysis\n& confirm"]; u5 [label="Track request status"]; u6 [label="Download outpass PDF"]; u7 [label="View profile"];
+  w1 [label="View all requests"]; w2 [label="View student details\n& NLP info"]; w3 [label="Approve / Reject\nwith remarks"]; w4 [label="View request history"]; w5 [label="Open digital outpass"];
+  g1 [label="Verify outpass\nby QR scan"]; }
+ Student -> u1; Student -> u2; Student -> u3; Student -> u4; Student -> u5; Student -> u6; Student -> u7;
+ Warden -> u2; Warden -> w1; Warden -> w2; Warden -> w3; Warden -> w4; Warden -> w5; Guard -> g1;
+ u3 -> u4 [style=dashed, label="<<include>>", fontsize=8]; w3 -> u6 [style=dashed, label="<<extend>>\n(if approved)", fontsize=8]; }

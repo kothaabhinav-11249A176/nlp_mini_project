@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import prio_badge %}
+{% block title %}NLP Analysis{% endblock %}
+{% block content %}
+<div class="flow">
+  <div class="fs done"><b><i class="bi bi-check-lg"></i></b>Write</div><div class="bar"></div>
+  <div class="fs on"><b>2</b>Review</div><div class="bar"></div>
+  <div class="fs"><b>3</b>Submit</div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card mb-3"><div class="card-header step-title"><b class="n">1</b>Your message</div>
+      <div class="card-body"><div class="chat-bubble">{{ info.original_text }}</div>
+      <div class="small text-muted mt-3 fw-semibold">Cleaned text</div><code class="d-block small mt-1">{{ info.cleaned_text }}</code></div></div>
+    <div class="card"><div class="card-header step-title"><b class="n">2</b>Tokens &amp; stop-word removal</div>
+      <div class="card-body">
+        <div class="small text-muted fw-semibold">Tokens ({{ info.tokens|length }})</div>
+        <div class="mb-3">{% for t in info.tokens %}<span class="token">{{ t }}</span>{% endfor %}</div>
+        <div class="small text-muted fw-semibold">After stop-word removal ({{ info.filtered_tokens|length }})</div>
+        <div>{% for t in info.filtered_tokens %}<span class="token token-key">{{ t }}</span>{% endfor %}</div>
+      </div></div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card mb-3"><div class="card-header step-title"><b class="n">3</b>Extracted information</div>
+      <div class="card-body">
+        <div class="row g-2 small">
+          <div class="col-sm-6"><div class="kv"><span><i class="bi bi-tag-fill"></i>Reason category</span><b>{{ info.category }}</b><em>{{ info.classification_method }} &middot; {{ (info.confidence*100)|round|int }}% confidence</em></div></div>
+          <div class="col-sm-6"><div class="kv"><span><i class="bi bi-flag-fill"></i>Suggested priority</span><b>{{ prio_badge(info.priority) }}</b><em>{{ info.priority_reason }}</em></div></div>
+          <div class="col-sm-6"><div class="kv"><span><i class="bi bi-geo-alt-fill"></i>Destination</span><b>{{ info.destination or '— not found —' }}</b><em>{{ info.destination_method }}</em></div></div>
+          <div class="col-sm-6"><div class="kv"><span><i class="bi bi-calendar-event"></i>Date</span><b>{% if info.departure_date %}{{ info.departure_date|pretty_date }}{% else %}— not found —{% endif %}</b><em>{% if info.date_phrase %}matched “{{ info.date_phrase }}”{% endif %}</em></div></div>
+          <div class="col-sm-6"><div class="kv"><span><i class="bi bi-clock"></i>Return time</span><b>{{ info.return_time|t12 or '— not found —' }}</b></div></div>
+          <div class="col-sm-6"><div class="kv"><span><i class="bi bi-box-arrow-right"></i>Departure time</span><b>{{ info.departure_time|t12 or 'not mentioned' }}</b></div></div>
+        </div>
+        {% if info.entities %}<div class="mt-3 small">Entities: {% for e in info.entities %}<span class="chip-s me-1">{{ e.text }} ({{ e.type }})</span>{% endfor %}</div>{% endif %}
+      </div></div>
+
+    {% if info.missing %}
+    <div class="alert alert-warning"><i class="bi bi-exclamation-triangle-fill"></i> <b>Missing information detected:</b> {{ info.missing|join(', ') }}.<br>
+      Please fill the highlighted fields below before submitting.</div>
+    {% endif %}
+    {% if info.date_in_past %}<div class="alert alert-danger">The date detected is in the past. Please correct it.</div>{% endif %}
+
+    <div class="card"><div class="card-header step-title"><b class="n">4</b>Review &amp; confirm structured application</div>
+      <div class="card-body">
+        <form method="post" action="{{ url_for('confirm_request') }}" class="row g-3">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <div class="col-md-6"><label class="form-label">Reason</label>
+            <select class="form-select" name="category">{% for c in ['Medical','Family Function','Personal Work','Academic','Shopping','Other'] %}<option {{ 'selected' if c==info.category }}>{{ c }}</option>{% endfor %}</select></div>
+          <div class="col-md-6"><label class="form-label">Destination</label>
+            <input class="form-control {{ 'is-invalid' if not info.destination }}" name="destination" value="{{ (info.destination or '')|replace(' (inferred)','') }}" required maxlength="80"></div>
+          <div class="col-md-4"><label class="form-label">Departure date</label>
+            <input type="date" class="form-control {{ 'is-invalid' if not info.departure_date or info.date_in_past }}" name="departure_date" value="{{ info.departure_date or '' }}" min="{{ today }}" max="{{ max_date }}" required></div>
+          <div class="col-md-4"><label class="form-label">Leaving time <small class="text-muted fw-normal">(optional)</small></label>
+            <input type="time" class="form-control" name="departure_time" value="{{ info.departure_time or '' }}"></div>
+          <div class="col-md-4"><label class="form-label">Return time</label>
+            <input type="time" class="form-control {{ 'is-invalid' if not info.return_time }}" name="return_time" value="{{ info.return_time or '' }}" required></div>
+          <div class="col-12 d-flex justify-content-between flex-wrap gap-2">
+            <a class="btn btn-outline-secondary" href="{{ url_for('new_request') }}"><i class="bi bi-arrow-left"></i> Edit message</a>
+            <button class="btn btn-success btn-lg"><i class="bi bi-send-fill"></i> Submit to Warden</button></div>
+        </form>
+      </div></div>
+  </div>
+</div>
+{% endblock %}

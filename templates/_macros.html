@@ -1,0 +1,43 @@
+{% macro status_badge(s) -%}
+  {%- if s == 'Approved' -%}<span class="pill pill-approved"><i class="bi bi-check-circle-fill"></i> Approved</span>
+  {%- elif s == 'Rejected' -%}<span class="pill pill-rejected"><i class="bi bi-x-circle-fill"></i> Rejected</span>
+  {%- else -%}<span class="pill pill-pending"><i class="bi bi-hourglass-split"></i> Pending</span>{%- endif -%}
+{%- endmacro %}
+{% macro prio_badge(p) -%}
+  {%- if p == 'High' -%}<span class="pill prio-high"><span class="prio-dot"></span> High priority</span>
+  {%- elif p == 'Medium' -%}<span class="pill prio-med"><span class="prio-dot"></span> Medium priority</span>
+  {%- else -%}<span class="pill prio-low"><span class="prio-dot"></span> Low priority</span>{%- endif -%}
+{%- endmacro %}
+{% macro stat_card(label, value, icon, color) -%}
+  <div class="col-6 col-md-3"><div class="card stat-card h-100"><div class="card-body d-flex align-items-center gap-3">
+    <div class="stat-icon tone-{{ color }}"><i class="bi {{ icon }}"></i></div>
+    <div><div class="stat-value">{{ value }}</div><div class="stat-label">{{ label }}</div></div>
+  </div></div></div>
+{%- endmacro %}
+{# 4-step progress dots: Submitted > Review > Decision > Outpass #}
+{% macro stepper(status) -%}
+  <div class="stepper" aria-label="Request progress">
+    <div class="st done"><div class="dot"><i class="bi bi-check-lg"></i></div>Submitted</div>
+    {%- if status == 'Pending' -%}
+    <div class="st now"><div class="dot"></div>In review</div>
+    <div class="st"><div class="dot"></div>Decision</div>
+    <div class="st"><div class="dot"></div>Outpass</div>
+    {%- elif status == 'Approved' -%}
+    <div class="st done"><div class="dot"><i class="bi bi-check-lg"></i></div>In review</div>
+    <div class="st ok"><div class="dot"><i class="bi bi-check-lg"></i></div>Approved</div>
+    <div class="st ok"><div class="dot"><i class="bi bi-qr-code"></i></div>Outpass</div>
+    {%- else -%}
+    <div class="st done"><div class="dot"><i class="bi bi-check-lg"></i></div>In review</div>
+    <div class="st bad"><div class="dot"><i class="bi bi-x-lg"></i></div>Rejected</div>
+    <div class="st"><div class="dot"></div>Outpass</div>
+    {%- endif -%}
+  </div>
+{%- endmacro %}
+{# white header card used at the top of every page #}
+{% macro page_head(icon, title, subtitle='', tone='') -%}
+  <div class="page-head">
+    <div class="ph-icon {{ tone }}"><i class="bi {{ icon }}"></i></div>
+    <div><h1>{{ title }}</h1>{% if subtitle %}<p>{{ subtitle }}</p>{% endif %}</div>
+    {% if caller %}<div class="ph-actions">{{ caller() }}</div>{% endif %}
+  </div>
+{%- endmacro %}

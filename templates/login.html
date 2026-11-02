@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Student Login{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-head">
+    <div class="lock-tile lt-student"><i class="bi bi-mortarboard-fill"></i></div>
+    <div><h2>Student Login</h2><p>Sign in to request and track your outpasses</p>
+      <div class="chips"><span class="chip-s on">Login</span><span class="chip-s">Request</span><span class="chip-s">QR Outpass</span></div></div>
+  </div>
+  <div class="card"><div class="card-body p-4">
+    <form method="post">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <div class="mb-3"><label class="form-label">Student ID or E-mail</label>
+        <div class="input-icon"><i class="bi bi-person-badge lead-i"></i><input class="form-control" name="identifier" placeholder="21CS001" required autofocus></div></div>
+      <div class="mb-4"><label class="form-label">Password</label>
+        <div class="input-icon"><i class="bi bi-lock-fill lead-i"></i><input type="password" class="form-control" name="password" placeholder="Enter password" required>
+          <button type="button" class="pw-toggle" aria-label="Show password"><i class="bi bi-eye"></i></button></div></div>
+      <button class="btn btn-primary btn-lg w-100"><i class="bi bi-box-arrow-in-right"></i> Login</button>
+    </form>
+    <div class="d-flex justify-content-between mt-3 small fw-semibold"><a href="{{ url_for('student_register') }}">Create an account</a><a href="{{ url_for('warden_login') }}">Warden login</a></div>
+    <div class="demo-box"><i class="bi bi-info-circle-fill"></i> <b>Demo:</b> ID <code>21CS001</code> / <code>Student@123</code></div>
+  </div></div>
+</div>
+{% endblock %}

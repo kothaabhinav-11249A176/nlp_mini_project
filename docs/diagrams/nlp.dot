@@ -1,0 +1,7 @@
+digraph G { rankdir=TB; fontname="Helvetica"; node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10]; edge [fontname="Helvetica", fontsize=9];
+ in [label="Student message\n\"I need permission to visit the hospital tomorrow...\"", fillcolor="#dbeafe"];
+ pre [label="1. Preprocess\nlower-case, remove symbols  [RULE]", fillcolor="#ecfccb"]; tok [label="2. Tokenize  [RULE]", fillcolor="#ecfccb"]; sw [label="3. Stop-word removal  [RULE]", fillcolor="#ecfccb"];
+ cls [label="4. Reason classification\nTF-IDF + Naive Bayes  [ML]\n+ keyword fallback  [RULE]", fillcolor="#fde68a"];
+ dt [label="5a. Date extraction  [RULE]\ntomorrow, weekdays, 15 Nov, dd/mm/yyyy", fillcolor="#ecfccb"]; tm [label="5b. Time extraction  [RULE]\n6 PM, 18:00, by evening", fillcolor="#ecfccb"]; ds [label="5c. Destination extraction  [RULE]\nplace dictionary, Org names, 'to/at <place>'", fillcolor="#ecfccb"]; ne [label="5d. Entities  [RULE]", fillcolor="#ecfccb"];
+ pr [label="6. Priority suggestion  [RULE]", fillcolor="#ecfccb"]; ms [label="7. Missing-information detection  [RULE]", fillcolor="#ecfccb"]; out [label="8. Structured application\n(category, destination, date, return time, priority)", fillcolor="#ccfbf1"]; conf [label="9. Student confirms / fills gaps\n-> saved as Pending", fillcolor="#dbeafe"];
+ in -> pre -> tok -> sw; sw -> cls; tok -> dt; tok -> tm; tok -> ds; tok -> ne; cls -> pr; dt -> pr; cls -> ms; dt -> ms; tm -> ms; ds -> ms; pr -> out; ms -> out; ne -> out; out -> conf; }

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Verify Outpass{% endblock %}
+{% block content %}
+<div class="verify-card">
+{% if valid %}
+  <div class="verify-top ok"><div class="ring"><i class="bi bi-check-lg"></i></div><h2>Valid Outpass</h2>
+    <div class="opacity-90 small mt-1"><i class="bi bi-qr-code-scan"></i> Gate verification successful</div></div>
+  <div class="p-4">
+    <div class="row g-2 mb-3">
+      <div class="col-12"><div class="kv"><span>Outpass ID</span><b>{{ r.outpass_no }}</b></div></div>
+      <div class="col-12"><div class="kv"><span>Student</span><b>{{ r.student_name }} ({{ r.roll_no }})</b></div></div>
+      <div class="col-6"><div class="kv"><span>Destination</span><b>{{ r.destination }}</b></div></div>
+      <div class="col-6"><div class="kv"><span>Return by</span><b>{{ r.return_time|t12 }}</b></div></div>
+      <div class="col-6"><div class="kv"><span>Date</span><b>{{ r.departure_date|pretty_date }}</b></div></div>
+      <div class="col-6"><div class="kv"><span>Approved by</span><b>{{ r.warden_name }}</b></div></div>
+    </div>
+    {% if r.departure_date == today %}<div class="alert alert-success mb-0"><i class="bi bi-check-circle-fill"></i> Valid for <b>today</b>.</div>
+    {% else %}<div class="alert alert-warning mb-0"><i class="bi bi-exclamation-triangle-fill"></i> Genuine outpass, but dated <b>{{ r.departure_date|pretty_date }}</b>, not today.</div>{% endif %}
+  </div>
+{% else %}
+  <div class="verify-top bad"><div class="ring"><i class="bi bi-x-lg"></i></div><h2>Invalid Outpass</h2></div>
+  <div class="p-4 text-center text-muted">This code does not match any approved outpass. Do not allow exit.</div>
+{% endif %}
+</div>
+{% endblock %}

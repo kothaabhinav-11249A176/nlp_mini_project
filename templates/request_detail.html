@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import status_badge, prio_badge, stepper %}
+{% block title %}Request #{{ r.id }}{% endblock %}
+{% block content %}
+<div class="status-hero s-{{ r.status|lower }}">
+  <div class="big"><i class="bi {{ 'bi-check-circle-fill' if r.status == 'Approved' else ('bi-x-circle-fill' if r.status == 'Rejected' else 'bi-hourglass-split') }}"></i></div>
+  <div>
+    <h2>Request #{{ r.id }} &middot; {{ r.destination }}</h2>
+    <p>{% if r.status == 'Approved' %}Approved by {{ r.warden_name }}. Your digital outpass is ready.
+       {% elif r.status == 'Rejected' %}This request was not approved. You may submit a new request.
+       {% else %}Waiting for warden approval.{% endif %}</p>
+  </div>
+  {% if r.status != 'Pending' %}<div class="stamp">{{ 'Approved' if r.status == 'Approved' else 'Denied' }}</div>{% endif %}
+  <a class="btn btn-light back" href="{{ url_for('my_requests') }}"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="row g-4">
+  <div class="col-lg-7"><div class="card"><div class="card-body">
+    <div class="small fw-bold text-muted mb-2">YOUR MESSAGE</div>
+    <div class="chat-bubble mb-3">{{ r.original_text }}</div>
+    {{ stepper(r.status) }}
+    <table class="table table-borderless info-table mt-3 mb-0">
+      <tr><th>Reason</th><td>{{ r.category }}</td></tr>
+      <tr><th>Destination</th><td>{{ r.destination }}</td></tr>
+      <tr><th>Departure date</th><td>{{ r.departure_date|pretty_date }}</td></tr>
+      <tr><th>Return time</th><td>{{ r.return_time|t12 }}</td></tr>
+      <tr><th>Suggested priority</th><td>{{ prio_badge(r.priority) }}</td></tr>
+      <tr><th>Submitted</th><td>{{ r.created_at }}</td></tr>
+      {% if r.status != 'Pending' %}
+      <tr><th>Decision by</th><td>{{ r.warden_name }} on {{ r.decided_at }}</td></tr>
+      <tr><th>Warden remarks</th><td>{{ r.warden_remarks or '-' }}</td></tr>{% endif %}
+    </table>
+    {% if r.status == 'Approved' %}
+    <div class="mt-3 d-flex gap-2 flex-wrap"><a class="btn btn-success" href="{{ url_for('student_outpass', rid=r.id) }}"><i class="bi bi-qr-code"></i> View Digital Outpass</a>
+    <a class="btn btn-outline-success" href="{{ url_for('outpass_pdf', rid=r.id) }}"><i class="bi bi-file-earmark-pdf-fill"></i> Download PDF</a></div>
+    {% endif %}
+  </div></div></div>
+  <div class="col-lg-5"><div class="card"><div class="card-header"><i class="bi bi-clock-history text-primary"></i> Status timeline</div><div class="card-body">
+    <ul class="timeline mb-0">
+    {% for h in hist %}<li class="tl-{{ h.action|lower }}"><b>{{ h.action }}</b> by {{ h.actor_name }} <span class="text-muted">({{ h.actor_role }})</span><div class="small text-muted">{{ h.created_at }}</div>{% if h.remarks %}<div class="small fst-italic">“{{ h.remarks }}”</div>{% endif %}</li>{% endfor %}
+    </ul></div></div></div>
+</div>
+{% endblock %}

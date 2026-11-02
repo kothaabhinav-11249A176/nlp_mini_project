@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <span class="hero-badge"><i class="bi bi-cpu-fill"></i> Powered by Natural Language Processing</span>
+  <h1>Digital Outpass Management System</h1>
+  <p class="sub">Type your request the way you would say it. We understand the reason, destination, date and return time &mdash; the warden approves &mdash; and you get a secure QR outpass.</p>
+  <div class="d-flex flex-wrap justify-content-center gap-2">
+    <a href="{{ url_for('student_login') }}" class="btn btn-light btn-lg"><i class="bi bi-box-arrow-in-right"></i> Login Now</a>
+    <a href="{{ url_for('student_register') }}" class="btn btn-outline-light btn-lg"><i class="bi bi-person-plus-fill"></i> Register</a>
+  </div>
+  <div class="glass hero-stats">
+    <div><b>6</b><span>Reason categories</span></div>
+    <div><b>5</b><span>Fields auto-detected</span></div>
+    <div><b>QR</b><span>Gate verified</span></div>
+  </div>
+</section>
+
+<div class="role-grid mt-2">
+  <a class="role-card rc-student" href="{{ url_for('student_login') }}"><i class="bi bi-mortarboard-fill big"></i><span>Student<small>Request &amp; track outpasses</small></span><i class="bi bi-arrow-right-short go"></i></a>
+  <a class="role-card rc-warden" href="{{ url_for('warden_login') }}"><i class="bi bi-shield-lock-fill big"></i><span>Warden<small>Review &amp; approve requests</small></span><i class="bi bi-arrow-right-short go"></i></a>
+  <a class="role-card rc-register" href="{{ url_for('student_register') }}"><i class="bi bi-person-plus-fill big"></i><span>New here?<small>Create a student account</small></span><i class="bi bi-arrow-right-short go"></i></a>
+</div>
+
+<section class="landing-section" aria-labelledby="demo-title">
+  <div class="section-heading">
+    <span class="section-kicker">FROM REQUEST TO REVIEW</span>
+    <h3 class="section-title" id="demo-title">See it in action</h3>
+    <p>One plain-English request becomes a clear, review-ready outpass.</p>
+  </div>
+  <div class="card demo-flow-card">
+    <div class="row g-0">
+      <div class="col-md-6 demo-flow-panel">
+        <div class="demo-panel-heading">
+          <span class="demo-panel-icon"><i class="bi bi-chat-left-text-fill"></i></span>
+          <span><b>Student request</b><small>Written in plain English</small></span>
+          <span class="demo-tag">EXAMPLE</span>
+        </div>
+        <div class="chat-bubble">I need permission to visit the hospital tomorrow because I am not feeling well. I will return by 6 PM.</div>
+        <div class="demo-note"><i class="bi bi-pencil-square"></i> Students can review and edit details before submitting.</div>
+      </div>
+      <div class="col-md-6 demo-flow-panel demo-result-panel">
+        <div class="demo-panel-heading">
+          <span class="demo-panel-icon result-icon"><i class="bi bi-cpu-fill"></i></span>
+          <span><b>Details identified</b><small>Ready for warden review</small></span>
+          <span class="demo-tag demo-tag-ready"><i class="bi bi-check-circle-fill"></i> READY</span>
+        </div>
+        <ul class="extract-list">
+          <li><b>Reason</b>Medical</li><li><b>Destination</b>Hospital</li>
+          <li><b>Date</b>Tomorrow</li><li><b>Return</b>6:00 PM</li>
+          <li><b>Priority</b><span class="demo-priority"><i class="bi bi-circle-fill"></i> High</span></li>
+          <li><b>Next step</b>Warden review</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

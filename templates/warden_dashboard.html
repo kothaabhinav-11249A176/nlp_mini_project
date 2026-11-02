@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import status_badge, prio_badge, stat_card %}
+{% block title %}Warden Dashboard{% endblock %}
+{% block content %}
+<div class="warden-hero">
+  <div class="icon-wrap"><i class="bi bi-shield-check"></i></div>
+  <div><h2>Welcome, {{ session.name }} 👋</h2><p>Real-time hostel outpass review &amp; gate monitoring dashboard</p></div>
+  {% if stats.Pending %}<a class="btn btn-gold ms-auto" href="{{ url_for('warden_dashboard', status='Pending') }}"><i class="bi bi-hourglass-split"></i> {{ stats.Pending }} awaiting review</a>{% endif %}
+</div>
+
+<div class="row g-3 mb-4">
+  {{ stat_card('Total Requests', stats.Total, 'bi-files', 'primary') }}
+  {{ stat_card('Pending', stats.Pending, 'bi-hourglass-split', 'warning') }}
+  {{ stat_card('Approved', stats.Approved, 'bi-check-circle-fill', 'success') }}
+  {{ stat_card('Rejected', stats.Rejected, 'bi-x-circle-fill', 'danger') }}
+</div>
+
+<div class="card mb-4"><div class="card-body py-3">
+  <form class="row g-2 align-items-center" method="get">
+    <div class="col-md-4"><div class="input-icon"><i class="bi bi-search lead-i"></i><input class="form-control" name="q" value="{{ q }}" placeholder="Search name, ID or destination"></div></div>
+    <div class="col-md-3"><select class="form-select" name="status"><option value="">All statuses</option>{% for s in ['Pending','Approved','Rejected'] %}<option {{ 'selected' if s==status }}>{{ s }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><select class="form-select" name="priority"><option value="">All priorities</option>{% for s in ['High','Medium','Low'] %}<option {{ 'selected' if s==prio }}>{{ s }}</option>{% endfor %}</select></div>
+    <div class="col-md-2"><button class="btn btn-primary w-100"><i class="bi bi-funnel-fill"></i> Filter</button></div>
+  </form></div></div>
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h4 class="mb-0"><i class="bi bi-clipboard2-check-fill text-primary"></i> {{ status or 'All' }} Requests <span class="text-muted fs-6 fw-semibold">({{ reqs|length }})</span></h4>
+</div>
+{% if reqs %}
+<div class="req-grid">
+  {% for r in reqs %}
+  <div class="req-card s-{{ r.status|lower }}">
+    <div class="req-top">{{ prio_badge(r.priority) }}{{ status_badge(r.status) }}</div>
+    <div class="d-flex align-items-center gap-2">
+      <div class="avatar sm">{{ r.student_name[0] }}</div>
+      <div><div class="req-title">{{ r.student_name }}</div><div class="req-id">{{ r.roll_no }} &middot; {{ r.hostel_block }}</div></div>
+    </div>
+    <div class="req-meta">
+      <div><i class="bi bi-tag-fill"></i>{{ r.category }}</div>
+      <div><i class="bi bi-geo-alt-fill"></i>{{ r.destination }}</div>
+      <div><i class="bi bi-calendar-event"></i>{{ r.departure_date|pretty_date }}</div>
+      <div><i class="bi bi-clock"></i>Return by {{ r.return_time|t12 }}</div>
+    </div>
+    <div class="req-actions">
+      <a class="btn btn-sm {{ 'btn-primary' if r.status=='Pending' else 'btn-outline-primary' }}" href="{{ url_for('review_request', rid=r.id) }}">{{ 'Review request' if r.status=='Pending' else 'View' }} <i class="bi bi-arrow-right"></i></a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty"><i class="bi bi-inbox-fill"></i>No requests match.</div>
+{% endif %}
+{% endblock %}

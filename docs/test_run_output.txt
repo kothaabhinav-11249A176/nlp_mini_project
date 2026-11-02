@@ -1,0 +1,21 @@
+test_01_registration (test_app.TestApp.test_01_registration) ... ok
+test_02_student_login_and_invalid (test_app.TestApp.test_02_student_login_and_invalid) ... ok
+test_03_csrf_required (test_app.TestApp.test_03_csrf_required) ... ok
+test_04_request_flow_and_analysis_page (test_app.TestApp.test_04_request_flow_and_analysis_page) ... ok
+test_05_full_workflow_approve_pdf_qr (test_app.TestApp.test_05_full_workflow_approve_pdf_qr) ... ok
+test_06_rejection_needs_remark (test_app.TestApp.test_06_rejection_needs_remark) ... ok
+test_07_invalid_inputs_rejected (test_app.TestApp.test_07_invalid_inputs_rejected) ... ok
+test_08_unauthorized_access (test_app.TestApp.test_08_unauthorized_access) ... ok
+test_09_warden_invalid_login (test_app.TestApp.test_09_warden_invalid_login) ... ok
+test_10_sql_injection_attempt (test_app.TestApp.test_10_sql_injection_attempt) ... ok
+test_categories (test_nlp.TestNLP.test_categories) ... ok
+test_dates (test_nlp.TestNLP.test_dates) ... ok
+test_destination (test_nlp.TestNLP.test_destination) ... ok
+test_example_from_brief (test_nlp.TestNLP.test_example_from_brief) ... ok
+test_missing_information (test_nlp.TestNLP.test_missing_information) ... ok
+test_ml_model_trains_and_predicts (test_nlp.TestNLP.test_ml_model_trains_and_predicts) ... ok
+test_preprocess_and_tokens (test_nlp.TestNLP.test_preprocess_and_tokens) ... ok
+test_priority (test_nlp.TestNLP.test_priority) ... ok
+test_times (test_nlp.TestNLP.test_times) ... ok
+Ran 19 tests in 3.311s
+OK

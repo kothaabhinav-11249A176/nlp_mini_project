@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import status_badge, prio_badge, stepper %}
+{% block title %}My Requests{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div class="ph-icon"><i class="bi bi-list-check"></i></div>
+  <div><h1>My Outpass Requests</h1><p>Track every request from submission to QR outpass</p></div>
+  <div class="ph-actions"><a class="btn btn-primary" href="{{ url_for('new_request') }}"><i class="bi bi-plus-lg"></i> New</a></div>
+</div>
+<div class="filter-bar mb-4">
+  {% for s, label in [('', 'All'), ('Pending','Pending'), ('Approved','Approved'), ('Rejected','Rejected')] %}
+  <a class="{{ 'active' if status==s }}" href="{{ url_for('my_requests', status=s) }}">{{ label }}</a>{% endfor %}
+</div>
+{% if reqs %}
+<div class="req-grid">
+  {% for r in reqs %}
+  <div class="req-card s-{{ r.status|lower }}">
+    <div class="req-top">{{ prio_badge(r.priority) }}{{ status_badge(r.status) }}</div>
+    <div><div class="req-title">{{ r.destination }}</div><div class="req-id">REQUEST #{{ r.id }} &middot; {{ r.category|upper }}</div></div>
+    <div class="req-meta">
+      <div><i class="bi bi-calendar-event"></i>{{ r.departure_date|pretty_date }}</div>
+      <div><i class="bi bi-clock"></i>Return by {{ r.return_time|t12 }}</div>
+      <div><i class="bi bi-send"></i>Submitted {{ r.created_at }}</div>
+    </div>
+    {{ stepper(r.status) }}
+    <div class="req-actions">
+      <a class="btn btn-sm btn-outline-primary" href="{{ url_for('request_detail', rid=r.id) }}">Details</a>
+      {% if r.status == 'Approved' %}<a class="btn btn-sm btn-success" href="{{ url_for('outpass_pdf', rid=r.id) }}"><i class="bi bi-file-earmark-pdf-fill"></i> PDF</a>{% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty"><i class="bi bi-inbox-fill"></i>No requests found.</div>
+{% endif %}
+{% endblock %}

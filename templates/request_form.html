@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}New Outpass Request{% endblock %}
+{% block content %}
+<div class="mx-auto" style="max-width:860px">
+  <div class="flow">
+    <div class="fs on"><b>1</b>Write</div><div class="bar"></div>
+    <div class="fs"><b>2</b>Review</div><div class="bar"></div>
+    <div class="fs"><b>3</b>Submit</div>
+  </div>
+  <div class="card"><div class="card-body p-4">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <div class="feature-icon mb-0 fi-green"><i class="bi bi-chat-left-text-fill"></i></div>
+      <div><h3 class="mb-0">Request an Outpass</h3>
+      <div class="text-muted small">Mention <b>why</b> you are going, <b>where</b>, <b>which day</b> and <b>when you will return</b>.</div></div>
+    </div>
+    <div class="detect mb-3"><span><i class="bi bi-tag-fill"></i> Reason</span><span><i class="bi bi-geo-alt-fill"></i> Destination</span><span><i class="bi bi-calendar-event"></i> Date</span><span><i class="bi bi-clock"></i> Return time</span></div>
+    <form method="post" id="reqForm">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <textarea class="form-control msg-box" id="message" name="message" rows="5" maxlength="500" required
+        placeholder="Example: I need permission to visit the hospital tomorrow because I am not feeling well. I will return by 6 PM.">{{ message }}</textarea>
+      <div class="d-flex justify-content-between small text-muted mt-1"><span>Max 500 characters</span><span id="counter">0 / 500</span></div>
+      <div class="mt-3">
+        <div class="small fw-bold text-muted mb-2"><i class="bi bi-lightbulb-fill text-warning"></i> Try an example</div>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="btn btn-sm btn-outline-secondary example">I need permission to visit the hospital tomorrow because I am not feeling well. I will return by 6 PM.</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary example">Going home on Saturday to attend my cousin's wedding, will be back by 8 PM on Sunday.</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary example">I want to go to the mall for shopping on Friday evening and return by 8:30 PM.</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary example">I have a placement interview at Infosys office day after tomorrow, back by 5 pm.</button>
+        </div>
+      </div>
+      <div class="text-end mt-4"><button class="btn btn-primary btn-lg"><i class="bi bi-cpu-fill"></i> Analyze with NLP</button></div>
+    </form>
+  </div></div>
+</div>
+{% endblock %}

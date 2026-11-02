@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import status_badge, prio_badge, stepper %}
+{% block title %}Review Request #{{ r.id }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div class="ph-icon"><i class="bi bi-clipboard2-check-fill"></i></div>
+  <div><h1>Review Request #{{ r.id }}</h1><p>{{ r.student_name }} &middot; {{ r.destination }}</p></div>
+  <div class="ph-actions">{{ status_badge(r.status) }}<a class="btn btn-outline-secondary btn-sm" href="{{ url_for('warden_dashboard') }}"><i class="bi bi-arrow-left"></i> Dashboard</a></div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-4"><div class="card h-100"><div class="card-header"><i class="bi bi-person-badge-fill text-primary"></i> Student Details</div><div class="card-body">
+    <div class="d-flex align-items-center gap-3 mb-3"><div class="avatar sm" style="width:64px;height:64px;font-size:1.7rem">{{ r.student_name[0] }}</div>
+      <div><b class="fs-5 text-dark">{{ r.student_name }}</b><div class="small text-muted">{{ r.roll_no }}</div></div></div>
+    <table class="table table-borderless info-table mb-0">
+      <tr><th>Department</th><td>{{ r.department }} (Year {{ r.year }})</td></tr>
+      <tr><th>Hostel</th><td>{{ r.hostel_block }}, {{ r.room_no }}</td></tr>
+      <tr><th>Phone</th><td>{{ r.phone }}</td></tr>
+      <tr><th>Parent</th><td>{{ r.parent_phone or '-' }}</td></tr>
+      <tr><th>E-mail</th><td class="text-break">{{ r.email }}</td></tr>
+    </table></div></div></div>
+  <div class="col-lg-8"><div class="card h-100"><div class="card-header"><i class="bi bi-cpu-fill text-primary"></i> Request &amp; NLP-Extracted Information</div><div class="card-body">
+    <div class="small fw-bold text-muted mb-2">ORIGINAL MESSAGE</div><div class="chat-bubble mb-3">{{ r.original_text }}</div>
+    <div class="row g-2 small">
+      <div class="col-sm-4"><div class="kv"><span><i class="bi bi-tag-fill"></i>Reason</span><b>{{ r.category }}</b><em>{{ nlp.classification_method }} &middot; {{ ((nlp.confidence or 0)*100)|round|int }}%</em></div></div>
+      <div class="col-sm-4"><div class="kv"><span><i class="bi bi-geo-alt-fill"></i>Destination</span><b>{{ r.destination }}</b></div></div>
+      <div class="col-sm-4"><div class="kv"><span><i class="bi bi-flag-fill"></i>Suggested priority</span><b>{{ prio_badge(r.priority) }}</b><em>{{ nlp.priority_reason }}</em></div></div>
+      <div class="col-sm-4"><div class="kv"><span><i class="bi bi-calendar-event"></i>Date</span><b>{{ r.departure_date|pretty_date }}</b></div></div>
+      <div class="col-sm-4"><div class="kv"><span><i class="bi bi-clock"></i>Return time</span><b>{{ r.return_time|t12 }}</b></div></div>
+      <div class="col-sm-4"><div class="kv"><span><i class="bi bi-send"></i>Submitted</span><b>{{ r.created_at }}</b></div></div>
+    </div></div></div></div>
+  <div class="col-lg-7"><div class="card h-100 {{ 'panel-orange' if r.status == 'Pending' }}"><div class="card-header"><i class="bi bi-hammer text-primary"></i> Decision</div><div class="card-body">
+    {% if r.status == 'Pending' %}
+    <form method="post" action="{{ url_for('decide', rid=r.id) }}">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <label class="form-label">Warden remarks <small class="text-muted fw-normal">(required for rejection)</small></label>
+      <textarea class="form-control mb-3" name="remarks" rows="3" maxlength="300" placeholder="e.g. Approved. Return before the stated time."></textarea>
+      <div class="decide"><button class="btn btn-success" name="decision" value="Approved"><i class="bi bi-check-circle-fill"></i> Approve</button>
+      <button class="btn btn-danger" name="decision" value="Rejected"><i class="bi bi-x-circle-fill"></i> Reject</button></div>
+    </form>
+    {% else %}
+      <div class="d-flex align-items-center gap-3 mb-3"><div class="stamp {{ 'text-success' if r.status == 'Approved' else 'text-danger' }}">{{ 'Approved' if r.status == 'Approved' else 'Denied' }}</div></div>
+      <p class="mb-1"><b>{{ r.status }}</b> by {{ r.warden_name }} on {{ r.decided_at }}</p><p class="text-muted">Remarks: {{ r.warden_remarks or '-' }}</p>
+      {% if r.status == 'Approved' %}<a class="btn btn-success" href="{{ url_for('warden_outpass', rid=r.id) }}"><i class="bi bi-qr-code"></i> Open Digital Outpass</a>
+      <a class="btn btn-outline-success" href="{{ url_for('outpass_pdf', rid=r.id) }}"><i class="bi bi-file-earmark-pdf-fill"></i> PDF</a>{% endif %}
+    {% endif %}</div></div></div>
+  <div class="col-lg-5"><div class="card h-100"><div class="card-header"><i class="bi bi-clock-history text-primary"></i> Request history</div><div class="card-body">
+    <ul class="timeline mb-3">{% for h in hist %}<li class="tl-{{ h.action|lower }}"><b>{{ h.action }}</b> &middot; {{ h.actor_name }}<div class="small text-muted">{{ h.created_at }}</div>{% if h.remarks %}<div class="small fst-italic">“{{ h.remarks }}”</div>{% endif %}</li>{% endfor %}</ul>
+    <div class="small fw-bold text-muted mb-1">STUDENT'S EARLIER REQUESTS ({{ past|length }})</div>
+    {% for p in past[:5] %}<div class="small d-flex justify-content-between align-items-center border-top py-2"><a class="fw-semibold" href="{{ url_for('review_request', rid=p.id) }}">#{{ p.id }} {{ p.category }} – {{ p.destination }}</a>{{ status_badge(p.status) }}</div>
+    {% else %}<div class="small text-muted">None</div>{% endfor %}
+  </div></div></div>
+</div>
+{% endblock %}

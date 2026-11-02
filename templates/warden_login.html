@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Warden Login{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-head">
+    <div class="lock-tile lt-warden"><i class="bi bi-shield-lock-fill"></i></div>
+    <div><h2>Warden Login</h2><p>Authorised hostel staff only</p>
+      <div class="chips"><span class="chip-s on">Sign in</span><span class="chip-s">Review</span><span class="chip-s">Approve</span></div></div>
+  </div>
+  <div class="card"><div class="card-body p-4">
+    <form method="post">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <div class="mb-3"><label class="form-label">Username</label>
+        <div class="input-icon"><i class="bi bi-person-fill lead-i"></i><input class="form-control" name="username" placeholder="warden" required autofocus></div></div>
+      <div class="mb-4"><label class="form-label">Password</label>
+        <div class="input-icon"><i class="bi bi-lock-fill lead-i"></i><input type="password" class="form-control" name="password" placeholder="Enter password" required>
+          <button type="button" class="pw-toggle" aria-label="Show password"><i class="bi bi-eye"></i></button></div></div>
+      <button class="btn btn-gold btn-lg w-100"><i class="bi bi-box-arrow-in-right"></i> Login as Warden</button>
+    </form>
+    <div class="text-center mt-3 small fw-semibold"><a href="{{ url_for('student_login') }}">&larr; Student login</a></div>
+    <div class="demo-box"><i class="bi bi-info-circle-fill"></i> <b>Demo warden:</b> <code>warden</code> / <code>Warden@123</code></div>
+  </div></div>
+</div>
+{% endblock %}
